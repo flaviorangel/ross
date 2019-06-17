@@ -206,9 +206,7 @@ class PressureMatrix:
         self.eccentricity_ratio = None
         self.load = load
         if self.eccentricity is None:
-            self.eccentricity = (
-                self.calculate_eccentricity_ratio() * self.difference_between_radius
-            )
+            self.eccentricity = self.calculate_eccentricity_ratio() * self.difference_between_radius
         self.eccentricity_ratio = self.eccentricity / self.difference_between_radius
         if self.load is None:
             self.load = self.get_rotor_load()
@@ -513,7 +511,7 @@ class PressureMatrix:
         roots = np.roots(coefficients)
         for i in range(0, len(roots)):
             if 0 <= roots[i] <= 1:
-                return np.sqrt(roots[i])
+                return np.sqrt(roots[i].real)
         sys.exit("Eccentricity ratio could not be calculated.")
 
     def get_analytical_stiffness_matrix(self):
