@@ -42,7 +42,7 @@ def fluid_flow_load():
 
 def test_sommerfeld_number():
     """
-    This function instantiate a bearing using the fluid flow class and test if it matches the
+    This function instantiates a bearing using the fluid flow class and tests if it matches the
     expected results for the sommerfeld number and eccentricity ratio.
     Taken from example 5.5.1, page 181 (Dynamics of rotating machine, FRISSWELL)
     """
@@ -52,7 +52,7 @@ def test_sommerfeld_number():
 
 def test_get_rotor_load():
     """
-    This function instantiate a bearing using the fluid flow class and test if it matches the
+    This function instantiates a bearing using the fluid flow class and tests if it matches the
     expected results for the load over the rotor, given the eccentricity ratio.
     Taken from example 5.5.1, page 181 (Dynamics of rotating machine, FRISSWELL)
     """
@@ -62,7 +62,7 @@ def test_get_rotor_load():
 
 def test_stiffness_matrix():
     """
-    This function instantiate a bearing using the fluid flow class and test if it matches the
+    This function instantiates a bearing using the fluid flow class and tests if it matches the
     expected results for the stiffness matrix, given the eccentricity ratio.
     Taken from example 5.5.1, page 181 (Dynamics of rotating machine, FRISSWELL)
     """
@@ -76,7 +76,7 @@ def test_stiffness_matrix():
 
 def test_damping_matrix():
     """
-    This function instantiate a bearing using the fluid flow class and test if it matches the
+    This function instantiates a bearing using the fluid flow class and tests if it matches the
     expected results for the damping matrix, given the eccentricity ratio.
     Taken from example 5.5.1, page 181 (Dynamics of rotating machine, FRISSWELL)
     """
