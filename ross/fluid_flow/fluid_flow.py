@@ -635,8 +635,8 @@ class PressureMatrix:
         # fmt: on
         return [cxx, cxy, cyx, cyy]
 
-    def calculate_oil_force_film(self, force_type=None):
-        """Calculates oil force film.
+    def calculate_oil_film_force(self, force_type=None):
+        """Calculates oil film force.
         """
         # TODO: complete documentation.
         if self.bearing_type == 'short_bearing' or force_type == 'short':
