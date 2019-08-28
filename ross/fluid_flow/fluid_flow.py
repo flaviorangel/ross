@@ -635,6 +635,30 @@ class PressureMatrix:
         # fmt: on
         return [cxx, cxy, cyx, cyy]
 
+    def calculate_oil_force_film(self, force_type=None):
+        """Calculates oil force film.
+        """
+        # TODO: complete documentation.
+        if self.bearing_type == 'short_bearing' or force_type == 'short':
+            opposite_force = 0.5 * self.viscosity * ((self.radius_stator / self.difference_between_radius)**2) *\
+                             ((self.length**3)/self.radius_stator) *\
+                             ((2*self.omega*self.eccentricity_ratio**2)/((1 - self.eccentricity_ratio**2)**2))
+            tangential_force = 0.5 * self.viscosity * ((self.radius_stator / self.difference_between_radius)**2) *\
+                               ((self.length ** 3) / self.radius_stator) * \
+                               ((np.pi*self.eccentricity_ratio*self.omega)/(2*(1-self.eccentricity_ratio**2)**(2./3)))
+        elif self.bearing_type == 'long_bearing' or force_type == 'long':
+            opposite_force = 6 * self.viscosity * ((self.radius_stator / self.difference_between_radius)**2) * \
+                             self.length * self.radius_stator * \
+                             ((2 * self.omega * self.eccentricity_ratio ** 2) /
+                              ((2 + self.eccentricity_ratio**2) * (1 - self.eccentricity_ratio**2)))
+            tangential_force = 6 * self.viscosity * ((self.radius_stator / self.difference_between_radius)**2) * \
+                               self.length * self.radius_stator * \
+                               ((2 * self.omega * self.eccentricity_ratio ** 2) /
+                                ((2 + self.eccentricity_ratio**2) * (1 - self.eccentricity_ratio**2)**0.5))
+        else:
+            raise ValueError("Cannot calculate oil force film numerically yet.")
+        return opposite_force, tangential_force
+
     def plot_eccentricity(self, z=0):
         """This function assembles pressure graphic along the z-axis.
         The first few plots are of a different color to indicate where theta begins.
