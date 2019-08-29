@@ -3,6 +3,7 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 from bokeh.plotting import figure
+from scipy import integrate
 
 
 class PressureMatrix:
@@ -639,14 +640,14 @@ class PressureMatrix:
         """Calculates oil film force.
         """
         # TODO: complete documentation.
-        if self.bearing_type == 'short_bearing' or force_type == 'short':
+        if force_type != 'numerical' and (force_type == 'short' or self.bearing_type == 'short_bearing'):
             opposite_force = 0.5 * self.viscosity * ((self.radius_stator / self.difference_between_radius)**2) *\
                              ((self.length**3)/self.radius_stator) *\
                              ((2*self.omega*self.eccentricity_ratio**2)/((1 - self.eccentricity_ratio**2)**2))
             tangential_force = 0.5 * self.viscosity * ((self.radius_stator / self.difference_between_radius)**2) *\
                                ((self.length ** 3) / self.radius_stator) * \
                                ((np.pi*self.eccentricity_ratio*self.omega)/(2*(1-self.eccentricity_ratio**2)**(2./3)))
-        elif self.bearing_type == 'long_bearing' or force_type == 'long':
+        elif force_type != 'numerical' and (force_type == 'long' or self.bearing_type == 'long_bearing'):
             opposite_force = 6 * self.viscosity * ((self.radius_stator / self.difference_between_radius)**2) * \
                              self.length * self.radius_stator * \
                              ((2 * self.omega * self.eccentricity_ratio ** 2) /
@@ -656,7 +657,39 @@ class PressureMatrix:
                                ((2 * self.omega * self.eccentricity_ratio ** 2) /
                                 ((2 + self.eccentricity_ratio**2) * (1 - self.eccentricity_ratio**2)**0.5))
         else:
-            raise ValueError("Cannot calculate oil force film numerically yet.")
+            if self.analytical_pressure_matrix_available:
+                p_mat = self.p_mat_analytical
+            elif self.numerical_pressure_matrix_available:
+                p_mat = self.p_mat_numerical
+            else:
+                raise ValueError("Must calculate the pressure matrix. "
+                                 "Try calling calculate_pressure_matrix_numerical() "
+                                 "or calculate_pressure_matrix_analytical() first."
+                                 )
+            a = np.zeros([self.nz, self.ntheta])
+            b = np.zeros([self.nz, self.ntheta])
+            g1 = np.zeros(self.nz)
+            g2 = np.zeros(self.nz)
+            theta_list = np.zeros(self.ntheta)
+            z_list = np.zeros(self.nz)
+            for i in range(self.nz):
+                z_list[i] = i * self.dz
+                for j in range(self.ntheta):
+                    theta_list[j] = j * self.dtheta + (np.pi - self.beta)
+                    gama = j * self.dtheta + (np.pi - self.beta)
+
+                    a[i][j] = p_mat[i][j] * np.cos(gama)
+                    b[i][j] = p_mat[i][j] * np.sin(gama)
+
+            for i in range(self.nz):
+                g1[i] = integrate.simps(a[:][i], theta_list)
+                g2[i] = integrate.simps(b[:][i], theta_list)
+
+            integral1 = integrate.simps(g1, z_list)
+            integral2 = integrate.simps(g2, z_list)
+
+            opposite_force = - self.radius_stator * integral1
+            tangential_force = self.radius_stator * integral2
         return opposite_force, tangential_force
 
     def plot_eccentricity(self, z=0):
