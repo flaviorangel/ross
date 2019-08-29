@@ -48,6 +48,7 @@ REQUIRED = [
     "bokeh",
     "coverage",
     "xlrd",
+    "scipy",
 ]
 
 # What packages are optional?
